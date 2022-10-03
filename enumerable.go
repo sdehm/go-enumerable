@@ -41,3 +41,12 @@ func Transform[T any, U any](e Enumerable[T], f func(T) U) Enumerable[U] {
 	}
 	return result
 }
+
+// Reverse the order of the Enumerable[T]
+func (e Enumerable[T]) Reverse() Enumerable[T] {
+	result := New([]T{})
+	for i := len(e.values) - 1; i >= 0; i-- {
+		result.values = append(result.values, e.values[i])
+	}
+	return result
+}
