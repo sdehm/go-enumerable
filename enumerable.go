@@ -9,6 +9,12 @@ func New[T any](values []T) Enumerable[T] {
 	return Enumerable[T]{values}
 }
 
+// Append a value to the Enumerable[T] and return a new Enumerable[T]
+func (e Enumerable[T]) Append(value T) Enumerable[T] {
+	e.values = append(e.values, value)
+	return e
+}
+
 // Map a function over the Enumerable[T], returning a new Enumerable[T]
 func (e Enumerable[T]) Map(f func(T) T) Enumerable[T] {
 	for i, v := range e.values {
@@ -37,7 +43,7 @@ func (e Enumerable[T]) ForEach(f func(T)) {
 func Transform[T any, U any](e Enumerable[T], f func(T) U) Enumerable[U] {
 	result := New([]U{})
 	for _, v := range e.values {
-		result.values = append(result.values, f(v))
+		result = result.Append(f(v))
 	}
 	return result
 }
@@ -46,7 +52,7 @@ func Transform[T any, U any](e Enumerable[T], f func(T) U) Enumerable[U] {
 func (e Enumerable[T]) Reverse() Enumerable[T] {
 	result := New([]T{})
 	for i := len(e.values) - 1; i >= 0; i-- {
-		result.values = append(result.values, e.values[i])
+		result = result.Append(e.values[i])
 	}
 	return result
 }
@@ -56,7 +62,7 @@ func (e Enumerable[T]) Filter(f func(T) bool) Enumerable[T] {
 	result := New(make([]T, 0, len(e.values)))
 	for _, v := range e.values {
 		if f(v) {
-			result.values = append(result.values, v)
+			result = result.Append(v)
 		}
 	}
 	return result

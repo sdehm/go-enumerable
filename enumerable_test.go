@@ -5,6 +5,21 @@ import (
 	"testing"
 )
 
+func TestAppend(t *testing.T) {
+	e := New([]int{1, 2, 3})
+	result := e.Append(4)
+	expected := New([]int{1, 2, 3, 4})
+
+	if len(result.values) != 4 {
+		t.Errorf("Expected 4 values, got %d", len(result.values))
+	}
+	for i, v := range result.values {
+		if v != expected.values[i] {
+			t.Errorf("Expected %d, got %d", expected.values[i], v)
+		}
+	}
+}
+
 func TestMapInt(t *testing.T) {
 	e := New([]int{1, 2, 3})
 	result := e.Map(func(i int) int { return i * 2 })
