@@ -1,6 +1,9 @@
 package enumerable
 
-import "testing"
+import (
+	"strconv"
+	"testing"
+)
 
 func TestMapInt(t *testing.T) {
 	e := New([]int{1, 2, 3})
@@ -60,5 +63,20 @@ func TestForEach(t *testing.T) {
 
 	if result != expected {
 		t.Errorf("Expected %d, got %d", expected, result)
+	}
+}
+
+func TestTransform(t *testing.T) {
+	e := New([]int{1, 2, 3})
+	result := Transform(e, func(i int) string { return strconv.Itoa(i) })
+	expected := New([]string{"1", "2", "3"})
+
+	if len(result.values) != 3 {
+		t.Errorf("Expected 3 values, got %d", len(result.values))
+	}
+	for i, v := range result.values {
+		if v != expected.values[i] {
+			t.Errorf("Expected %s, got %s", expected.values[i], v)
+		}
 	}
 }

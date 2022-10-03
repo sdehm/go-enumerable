@@ -32,3 +32,12 @@ func (e Enumerable[T]) ForEach(f func(T)) {
 		f(v)
 	}
 }
+
+// Map a function over the Enumerable[T] but return a new Enumerable of a different type
+func Transform[T any, U any](e Enumerable[T], f func(T) U) Enumerable[U] {
+	result := New([]U{})
+	for _, v := range e.values {
+		result.values = append(result.values, f(v))
+	}
+	return result
+}
