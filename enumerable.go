@@ -16,3 +16,11 @@ func (e Enumerable[T]) Map(f func(T) T) Enumerable[T]{
 	}
 	return e
 }
+
+func (e Enumerable[T]) Reduce(f func(T, T) T) T {
+	result := e.values[0]
+	for _, v := range e.values[1:] {
+		result = f(result, v)
+	}
+	return result
+}

@@ -31,3 +31,23 @@ func TestMapString(t *testing.T) {
 		}
 	}
 }
+
+func TestReduceInt(t *testing.T) {
+	e := New([]int{1, 2, 3})
+	result := e.Reduce(func(a, b int) int { return a + b })
+	expected := 6
+
+	if result != expected {
+		t.Errorf("Expected %d, got %d", expected, result)
+	}
+}
+
+func TestReduceString(t *testing.T) {
+	e := New([]string{"a", "b", "c"})
+	result := e.Reduce(func(a, b string) string { return a + b })
+	expected := "abc"
+
+	if result != expected {
+		t.Errorf("Expected %s, got %s", expected, result)
+	}
+}
