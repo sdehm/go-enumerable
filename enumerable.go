@@ -1,6 +1,6 @@
 package enumerable
 
-type	Enumerable[T any] struct {
+type Enumerable[T any] struct {
 	values []T
 }
 
@@ -10,7 +10,7 @@ func New[T any](values []T) Enumerable[T] {
 }
 
 // Map a function over the Enumerable[T], returning a new Enumerable[T]
-func (e Enumerable[T]) Map(f func(T) T) Enumerable[T]{
+func (e Enumerable[T]) Map(f func(T) T) Enumerable[T] {
 	for i, v := range e.values {
 		e.values[i] = f(v)
 	}
