@@ -50,3 +50,14 @@ func (e Enumerable[T]) Reverse() Enumerable[T] {
 	}
 	return result
 }
+
+// Filter an Enumerable[T] by a predicate function
+func (e Enumerable[T]) Filter(f func(T) bool) Enumerable[T] {
+	result := New(make([]T, 0, len(e.values)))
+	for _, v := range e.values {
+		if f(v) {
+			result.values = append(result.values, v)
+		}
+	}
+	return result
+}

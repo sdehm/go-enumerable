@@ -115,3 +115,18 @@ func TestReverse(t *testing.T) {
 		}
 	}
 }
+
+func TestFilter(t *testing.T) {
+	e := New([]int{1, 2, 3})
+	result := e.Filter(func(i int) bool { return i > 1 })
+	expected := New([]int{2, 3})
+
+	if len(result.values) != 2 {
+		t.Errorf("Expected 2 values, got %d", len(result.values))
+	}
+	for i, v := range result.values {
+		if v != expected.values[i] {
+			t.Errorf("Expected %d, got %d", expected.values[i], v)
+		}
+	}
+}
