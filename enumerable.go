@@ -25,3 +25,10 @@ func (e Enumerable[T]) Reduce(f func(T, T) T) T {
 	}
 	return result
 }
+
+// Iterate over the Enumerable[T], calling the function for each value
+func (e Enumerable[T]) ForEach(f func(T)) {
+	for _, v := range e.values {
+		f(v)
+	}
+}

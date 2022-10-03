@@ -51,3 +51,14 @@ func TestReduceString(t *testing.T) {
 		t.Errorf("Expected %s, got %s", expected, result)
 	}
 }
+
+func TestForEach(t *testing.T) {
+	e := New([]int{1, 2, 3})
+	var result int
+	e.ForEach(func(i int) { result += i })
+	expected := 6
+
+	if result != expected {
+		t.Errorf("Expected %d, got %d", expected, result)
+	}
+}
