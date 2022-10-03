@@ -17,6 +17,7 @@ func (e Enumerable[T]) Map(f func(T) T) Enumerable[T]{
 	return e
 }
 
+// Reduce the Enumerable[T] to a single value
 func (e Enumerable[T]) Reduce(f func(T, T) T) T {
 	result := e.values[0]
 	for _, v := range e.values[1:] {
