@@ -7,7 +7,7 @@ import (
 
 func TestAppend(t *testing.T) {
 	e := New([]int{1, 2, 3})
-	result := e.Append(4)
+	result := e.Append(4).Apply()
 	expected := New([]int{1, 2, 3, 4})
 
 	if len(result.values) != 4 {
@@ -118,7 +118,7 @@ func TestNestedMap(t *testing.T) {
 
 func TestReverse(t *testing.T) {
 	e := New([]int{1, 2, 3})
-	result := e.Reverse()
+	result := e.Reverse().Apply()
 	expected := New([]int{3, 2, 1})
 
 	if len(result.values) != 3 {
@@ -133,7 +133,7 @@ func TestReverse(t *testing.T) {
 
 func TestFilter(t *testing.T) {
 	e := New([]int{1, 2, 3})
-	result := e.Filter(func(i int) bool { return i > 1 })
+	result := e.Filter(func(i int) bool { return i > 1 }).Apply()
 	expected := New([]int{2, 3})
 
 	if len(result.values) != 2 {

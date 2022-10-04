@@ -12,8 +12,10 @@ func New[T any](values []T) Enumerable[T] {
 
 // Append a value to the Enumerable[T] and return a new Enumerable[T]
 func (e Enumerable[T]) Append(value T) Enumerable[T] {
-	e.values = append(e.values, value)
-	return e
+	return e.lazy(func(e Enumerable[T]) Enumerable[T] {
+		e.values = append(e.values, value)
+		return e
+	})
 }
 
 // Map a function over the Enumerable[T], returning a new Enumerable[T]
@@ -46,9 +48,10 @@ func (e Enumerable[T]) ForEach(f func(T)) {
 func Transform[T any, U any](e Enumerable[T], f func(T) U) Enumerable[U] {
 	result := New([]U{})
 	for _, v := range e.values {
+		// TODO: Lazy evaluation broken here
 		result = result.Append(f(v))
 	}
-	return result
+	return result.Apply()
 }
 
 // Reverse the order of the Enumerable[T]
