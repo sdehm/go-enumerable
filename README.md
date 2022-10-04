@@ -7,13 +7,13 @@ I am sure that there have been many similar libraries made like this but I avoid
 
 ## Future Features
 
-* Lazy evaluation
-* Parallel evaluation
-* More functions
-* Performance improvements and analysis
+- [x] Lazy evaluation
+- [ ] Parallel evaluation
+- [ ] More functions
+- [ ] Performance improvements and analysis
 
 ## Stretch Goals
 
-* DSL
-* Query builder for SQL and other databases
-* Large data set support
+- [ ] DSL
+- [ ] Query builder for SQL and other databases
+- [ ] Large data set support
