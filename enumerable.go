@@ -1,12 +1,12 @@
 package enumerable
 
-type Enumerable[T any] struct {
+type Enumerable[T comparable] struct {
 	values []T
 	stack  []func(Enumerable[T]) Enumerable[T]
 }
 
 // Create a new Enumerable[T] from a slice of T
-func New[T any](values []T) Enumerable[T] {
+func New[T comparable](values []T) Enumerable[T] {
 	return Enumerable[T]{values, []func(Enumerable[T]) Enumerable[T]{}}
 }
 
@@ -58,6 +58,16 @@ func (e Enumerable[T]) Filter(f func(T) bool) Enumerable[T] {
 	})
 }
 
+// Contains returns true if the Enumerable[T] contains the value
+func (e Enumerable[T]) Contains(value T) bool {
+		for _, v := range e.Apply().values {
+			if v == value {
+				return true
+			}
+		}
+	return false
+}
+
 // Reduce the Enumerable[T] to a single value
 func (e Enumerable[T]) Reduce(f func(T, T) T) T {
 	result := e.values[0]
@@ -75,7 +85,7 @@ func (e Enumerable[T]) ForEach(f func(T)) {
 }
 
 // Map a function over the Enumerable[T] but return a new Enumerable of a different type
-func Transform[T any, U any](e Enumerable[T], f func(T) U) Enumerable[U] {
+func Transform[T comparable, U comparable](e Enumerable[T], f func(T) U) Enumerable[U] {
 	result := New([]U{})
 	for _, v := range e.values {
 		// TODO: Lazy evaluation broken here

@@ -96,26 +96,6 @@ func TestTransform(t *testing.T) {
 	}
 }
 
-func TestNestedMap(t *testing.T) {
-	e := New([]Enumerable[int]{New([]int{1, 2, 3}), New([]int{2, 3, 4}), New([]int{3, 4, 5})})
-	result := e.Map(func(e Enumerable[int]) Enumerable[int] { return e.Map(func(i int) int { return i * 2 }).Apply() }).Apply()
-	expected := New([]Enumerable[int]{New([]int{2, 4, 6}), New([]int{4, 6, 8}), New([]int{6, 8, 10})})
-
-	if len(result.values) != 3 {
-		t.Errorf("Expected 3 values, got %d", len(result.values))
-	}
-	for i, v := range result.values {
-		if len(v.values) != 3 {
-			t.Errorf("Expected 3 values, got %d", len(v.values))
-		}
-		for j, w := range v.values {
-			if w != expected.values[i].values[j] {
-				t.Errorf("Expected %d, got %d", expected.values[i].values[j], w)
-			}
-		}
-	}
-}
-
 func TestReverse(t *testing.T) {
 	e := New([]int{1, 2, 3})
 	result := e.Reverse().Apply()
@@ -218,5 +198,16 @@ func TestReverseThenMap(t *testing.T) {
 		if v != expected.values[i] {
 			t.Errorf("Expected %d, got %d", expected.values[i], v)
 		}
+	}
+}
+
+func TestContains(t *testing.T) {
+	e := New([]int{1, 2, 3})
+
+	if !e.Contains(1) {
+		t.Errorf("Expected true, got false")
+	}
+	if e.Contains(4) {
+		t.Errorf("Expected false, got true")
 	}
 }
