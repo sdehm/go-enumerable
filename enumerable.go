@@ -80,6 +80,7 @@ func (e Enumerable[T]) ContainsBy(f func(T) bool) bool {
 
 // Reduce the Enumerable[T] to a single value
 func (e Enumerable[T]) Reduce(f func(T, T) T) T {
+	e = e.Apply()
 	result := e.values[0]
 	for _, v := range e.values[1:] {
 		result = f(result, v)

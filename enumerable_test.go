@@ -222,3 +222,13 @@ func TestContainsBy(t *testing.T) {
 		t.Errorf("Expected false, got true")
 	}
 }
+
+func TestFilterThenReduce(t *testing.T) {
+	e := New([]int{1, 2, 3})
+	result := e.Filter(func(i int) bool { return i > 1 }).Reduce(func(a int, b int) int { return a + b })
+	expected := 5
+
+	if result != expected {
+		t.Errorf("Expected %d, got %d", expected, result)
+	}
+}
