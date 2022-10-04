@@ -232,3 +232,51 @@ func TestFilterThenReduce(t *testing.T) {
 		t.Errorf("Expected %d, got %d", expected, result)
 	}
 }
+
+func TestFilterThenForEach(t *testing.T) {
+	e := New([]int{1, 2, 3})
+	result := 0
+	e.Filter(func(i int) bool { return i > 1 }).ForEach(func(i int) { result += i })
+	expected := 5
+
+	if result != expected {
+		t.Errorf("Expected %d, got %d", expected, result)
+	}
+}
+
+func TestFilterThenContains(t *testing.T) {
+	e := New([]int{1, 2, 3})
+
+	if !e.Filter(func(i int) bool { return i > 1 }).Contains(2) {
+		t.Errorf("Expected true, got false")
+	}
+	if e.Filter(func(i int) bool { return i > 1 }).Contains(1) {
+		t.Errorf("Expected false, got true")
+	}
+}
+
+func TestFilterThenContainsBy(t *testing.T) {
+	e := New([]int{1, 2, 3})
+
+	if !e.Filter(func(i int) bool { return i > 1 }).ContainsBy(func(i int) bool { return i == 2 }) {
+		t.Errorf("Expected true, got false")
+	}
+	if e.Filter(func(i int) bool { return i > 1 }).ContainsBy(func(i int) bool { return i == 1 }) {
+		t.Errorf("Expected false, got true")
+	}
+}
+
+func TestFilterThenTransform(t *testing.T) {
+	e := New([]int{1, 2, 3})
+	result := Transform(e.Filter(func(i int) bool { return i > 1 }), func(i int) string { return strconv.Itoa(i) })
+	expected := New([]string{"2", "3"})
+
+	if len(result.values) != 2 {
+		t.Errorf("Expected 2 values, got %d", len(result.values))
+	}
+	for i, v := range result.values {
+		if v != expected.values[i] {
+			t.Errorf("Expected %s, got %s", expected.values[i], v)
+		}
+	}
+}

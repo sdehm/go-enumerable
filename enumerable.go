@@ -90,7 +90,7 @@ func (e Enumerable[T]) Reduce(f func(T, T) T) T {
 
 // Iterate over the Enumerable[T], calling the function for each value
 func (e Enumerable[T]) ForEach(f func(T)) {
-	for _, v := range e.values {
+	for _, v := range e.Apply().values {
 		f(v)
 	}
 }
@@ -98,7 +98,7 @@ func (e Enumerable[T]) ForEach(f func(T)) {
 // Map a function over the Enumerable[T] but return a new Enumerable of a different type
 func Transform[T comparable, U comparable](e Enumerable[T], f func(T) U) Enumerable[U] {
 	result := New([]U{})
-	for _, v := range e.values {
+	for _, v := range e.Apply().values {
 		// TODO: Lazy evaluation broken here
 		result = result.Append(f(v))
 	}
