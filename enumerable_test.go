@@ -215,10 +215,10 @@ func TestContains(t *testing.T) {
 func TestContainsBy(t *testing.T) {
 	e := New([]int{1, 2, 3})
 
-	if !e.ContainsBy(func(i int) bool { return i == 1 }) {
+	if !e.Any(func(i int) bool { return i == 1 }) {
 		t.Errorf("Expected true, got false")
 	}
-	if e.ContainsBy(func(i int) bool { return i == 4 }) {
+	if e.Any(func(i int) bool { return i == 4 }) {
 		t.Errorf("Expected false, got true")
 	}
 }
@@ -258,10 +258,10 @@ func TestFilterThenContains(t *testing.T) {
 func TestFilterThenContainsBy(t *testing.T) {
 	e := New([]int{1, 2, 3})
 
-	if !e.Filter(func(i int) bool { return i > 1 }).ContainsBy(func(i int) bool { return i == 2 }) {
+	if !e.Filter(func(i int) bool { return i > 1 }).Any(func(i int) bool { return i == 2 }) {
 		t.Errorf("Expected true, got false")
 	}
-	if e.Filter(func(i int) bool { return i > 1 }).ContainsBy(func(i int) bool { return i == 1 }) {
+	if e.Filter(func(i int) bool { return i > 1 }).Any(func(i int) bool { return i == 1 }) {
 		t.Errorf("Expected false, got true")
 	}
 }
