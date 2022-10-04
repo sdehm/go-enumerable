@@ -160,3 +160,33 @@ func TestToList(t *testing.T) {
 		}
 	}
 }
+
+func TestMapThenFilter(t *testing.T) {
+	e := New([]int{1, 2, 3})
+	result := e.Map(func(i int) int { return i * 2 }).Filter(func(i int) bool { return i > 2 }).Apply()
+	expected := New([]int{4, 6})
+
+	if len(result.values) != 2 {
+		t.Errorf("Expected 2 values, got %d", len(result.values))
+	}
+	for i, v := range result.values {
+		if v != expected.values[i] {
+			t.Errorf("Expected %d, got %d", expected.values[i], v)
+		}
+	}
+}
+
+func TestFilterThenMap(t *testing.T) {
+	e := New([]int{1, 2, 3})
+	result := e.Filter(func(i int) bool { return i > 1 }).Map(func(i int) int { return i * 2 }).Apply()
+	expected := New([]int{4, 6})
+
+	if len(result.values) != 2 {
+		t.Errorf("Expected 2 values, got %d", len(result.values))
+	}
+	for i, v := range result.values {
+		if v != expected.values[i] {
+			t.Errorf("Expected %d, got %d", expected.values[i], v)
+		}
+	}
+}
