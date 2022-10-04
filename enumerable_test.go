@@ -22,7 +22,7 @@ func TestAppend(t *testing.T) {
 
 func TestMapInt(t *testing.T) {
 	e := New([]int{1, 2, 3})
-	result := e.Map(func(i int) int { return i * 2 })
+	result := e.Map(func(i int) int { return i * 2 }).Apply()
 	expected := New([]int{2, 4, 6})
 
 	if len(result.values) != 3 {
@@ -37,7 +37,7 @@ func TestMapInt(t *testing.T) {
 
 func TestMapString(t *testing.T) {
 	e := New([]string{"a", "b", "c"})
-	result := e.Map(func(s string) string { return s + s })
+	result := e.Map(func(s string) string { return s + s }).Apply()
 	expected := New([]string{"aa", "bb", "cc"})
 
 	if len(result.values) != 3 {
@@ -98,7 +98,7 @@ func TestTransform(t *testing.T) {
 
 func TestNestedMap(t *testing.T) {
 	e := New([]Enumerable[int]{New([]int{1, 2, 3}), New([]int{2, 3, 4}), New([]int{3, 4, 5})})
-	result := e.Map(func(e Enumerable[int]) Enumerable[int] { return e.Map(func(i int) int { return i * 2 }) })
+	result := e.Map(func(e Enumerable[int]) Enumerable[int] { return e.Map(func(i int) int { return i * 2 }).Apply() }).Apply()
 	expected := New([]Enumerable[int]{New([]int{2, 4, 6}), New([]int{4, 6, 8}), New([]int{6, 8, 10})})
 
 	if len(result.values) != 3 {

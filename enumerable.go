@@ -2,11 +2,12 @@ package enumerable
 
 type Enumerable[T any] struct {
 	values []T
+	stack  []func(Enumerable[T]) Enumerable[T]
 }
 
 // Create a new Enumerable[T] from a slice of T
 func New[T any](values []T) Enumerable[T] {
-	return Enumerable[T]{values}
+	return Enumerable[T]{values, []func(Enumerable[T]) Enumerable[T]{}}
 }
 
 // Append a value to the Enumerable[T] and return a new Enumerable[T]
@@ -17,9 +18,13 @@ func (e Enumerable[T]) Append(value T) Enumerable[T] {
 
 // Map a function over the Enumerable[T], returning a new Enumerable[T]
 func (e Enumerable[T]) Map(f func(T) T) Enumerable[T] {
-	for i, v := range e.values {
-		e.values[i] = f(v)
+	fun := func(e Enumerable[T]) Enumerable[T] {
+		for i, v := range e.values {
+			e.values[i] = f(v)
+		}
+		return e
 	}
+	e.stack = append(e.stack, fun)
 	return e
 }
 
@@ -66,4 +71,11 @@ func (e Enumerable[T]) Filter(f func(T) bool) Enumerable[T] {
 		}
 	}
 	return result
+}
+
+func (e Enumerable[T]) Apply() Enumerable[T] {
+	for _, f := range e.stack {
+		e = f(e)
+	}
+	return e
 }
