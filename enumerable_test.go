@@ -190,3 +190,33 @@ func TestFilterThenMap(t *testing.T) {
 		}
 	}
 }
+
+func TestMapThenReverse(t *testing.T) {
+	e := New([]int{1, 2, 3})
+	result := e.Map(func(i int) int { return i * 2 }).Reverse().Apply()
+	expected := New([]int{6, 4, 2})
+
+	if len(result.values) != 3 {
+		t.Errorf("Expected 3 values, got %d", len(result.values))
+	}
+	for i, v := range result.values {
+		if v != expected.values[i] {
+			t.Errorf("Expected %d, got %d", expected.values[i], v)
+		}
+	}
+}
+
+func TestReverseThenMap(t *testing.T) {
+	e := New([]int{1, 2, 3})
+	result := e.Reverse().Map(func(i int) int { return i * 2 }).Apply()
+	expected := New([]int{6, 4, 2})
+
+	if len(result.values) != 3 {
+		t.Errorf("Expected 3 values, got %d", len(result.values))
+	}
+	for i, v := range result.values {
+		if v != expected.values[i] {
+			t.Errorf("Expected %d, got %d", expected.values[i], v)
+		}
+	}
+}
