@@ -11,6 +11,7 @@ func New[T any](values []T) Enumerable[T] {
 }
 
 // Append a value to the Enumerable[T] and return a new Enumerable[T]
+// Evaluates lazily, call apply to evaluate
 func (e Enumerable[T]) Append(value T) Enumerable[T] {
 	return e.lazy(func(e Enumerable[T]) Enumerable[T] {
 		e.values = append(e.values, value)
@@ -19,11 +20,40 @@ func (e Enumerable[T]) Append(value T) Enumerable[T] {
 }
 
 // Map a function over the Enumerable[T], returning a new Enumerable[T]
+// Evaluates lazily, call apply to evaluate
 func (e Enumerable[T]) Map(f func(T) T) Enumerable[T] {
 	return e.lazy(func(e Enumerable[T]) Enumerable[T] {
 		for i, v := range e.values {
 			e.values[i] = f(v)
 		}
+		return e
+	})
+}
+
+// Reverse the order of the Enumerable[T]
+// Evaluates lazily, call apply to evaluate
+func (e Enumerable[T]) Reverse() Enumerable[T] {
+	return e.lazy(func(e Enumerable[T]) Enumerable[T] {
+		result := New([]T{})
+		for i := len(e.values) - 1; i >= 0; i-- {
+			result.values = append(result.values, e.values[i])
+		}
+		return result
+	})
+}
+
+// Filter an Enumerable[T] by a predicate function
+// Evaluates lazily, call apply to evaluate
+func (e Enumerable[T]) Filter(f func(T) bool) Enumerable[T] {
+	return e.lazy(func(e Enumerable[T]) Enumerable[T] {
+		index := 0
+		for _, v := range e.values {
+			if f(v) {
+				e.values = append(e.values[:index], v)
+				index++
+			}
+		}
+		e.values = e.values[:index]
 		return e
 	})
 }
@@ -54,32 +84,7 @@ func Transform[T any, U any](e Enumerable[T], f func(T) U) Enumerable[U] {
 	return result.Apply()
 }
 
-// Reverse the order of the Enumerable[T]
-func (e Enumerable[T]) Reverse() Enumerable[T] {
-	return e.lazy(func(e Enumerable[T]) Enumerable[T] {
-		result := New([]T{})
-		for i := len(e.values) - 1; i >= 0; i-- {
-			result.values = append(result.values, e.values[i])
-		}
-		return result
-	})
-}
-
-// Filter an Enumerable[T] by a predicate function
-func (e Enumerable[T]) Filter(f func(T) bool) Enumerable[T] {
-	return e.lazy(func(e Enumerable[T]) Enumerable[T] {
-		index := 0
-		for _, v := range e.values {
-			if f(v) {
-				e.values = append(e.values[:index], v)
-				index++
-			}
-		}
-		e.values = e.values[:index]
-		return e
-	})
-}
-
+// Apply all the functions from the stack to the Enumerable[T]
 func (e Enumerable[T]) Apply() Enumerable[T] {
 	for _, f := range e.stack {
 		e = f(e)
