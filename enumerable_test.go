@@ -145,3 +145,18 @@ func TestFilter(t *testing.T) {
 		}
 	}
 }
+
+func TestToList(t *testing.T) {
+	e := New([]int{1, 2, 3})
+	result := e.ToList()
+	expected := []int{1, 2, 3}
+
+	if len(result) != 3 {
+		t.Errorf("Expected 3 values, got %d", len(result))
+	}
+	for i, v := range result {
+		if v != expected[i] {
+			t.Errorf("Expected %d, got %d", expected[i], v)
+		}
+	}
+}

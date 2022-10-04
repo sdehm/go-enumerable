@@ -87,6 +87,11 @@ func (e Enumerable[T]) Apply() Enumerable[T] {
 	return e
 }
 
+// Apply any pending operations and return the values as a slice
+func (e Enumerable[T]) ToList() []T {
+	return e.Apply().values
+}
+
 func (e Enumerable[T]) lazy(f func(Enumerable[T]) Enumerable[T]) Enumerable[T] {
 	e.stack = append(e.stack, f)
 	return e
