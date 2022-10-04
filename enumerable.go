@@ -18,14 +18,12 @@ func (e Enumerable[T]) Append(value T) Enumerable[T] {
 
 // Map a function over the Enumerable[T], returning a new Enumerable[T]
 func (e Enumerable[T]) Map(f func(T) T) Enumerable[T] {
-	fun := func(e Enumerable[T]) Enumerable[T] {
+	return e.lazy(func(e Enumerable[T]) Enumerable[T] {
 		for i, v := range e.values {
 			e.values[i] = f(v)
 		}
 		return e
-	}
-	e.stack = append(e.stack, fun)
-	return e
+	})
 }
 
 // Reduce the Enumerable[T] to a single value
@@ -77,5 +75,10 @@ func (e Enumerable[T]) Apply() Enumerable[T] {
 	for _, f := range e.stack {
 		e = f(e)
 	}
+	return e
+}
+
+func (e Enumerable[T]) lazy(f func(Enumerable[T]) Enumerable[T]) Enumerable[T] {
+	e.stack = append(e.stack, f)
 	return e
 }
