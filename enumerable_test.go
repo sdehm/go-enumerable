@@ -7,7 +7,7 @@ import (
 
 func TestAppend(t *testing.T) {
 	e := New([]int{1, 2, 3})
-	result := e.Append(4)
+	result := e.Append(4).Apply()
 	expected := New([]int{1, 2, 3, 4})
 
 	if len(result.values) != 4 {
@@ -22,7 +22,7 @@ func TestAppend(t *testing.T) {
 
 func TestMapInt(t *testing.T) {
 	e := New([]int{1, 2, 3})
-	result := e.Map(func(i int) int { return i * 2 })
+	result := e.Map(func(i int) int { return i * 2 }).Apply()
 	expected := New([]int{2, 4, 6})
 
 	if len(result.values) != 3 {
@@ -37,7 +37,7 @@ func TestMapInt(t *testing.T) {
 
 func TestMapString(t *testing.T) {
 	e := New([]string{"a", "b", "c"})
-	result := e.Map(func(s string) string { return s + s })
+	result := e.Map(func(s string) string { return s + s }).Apply()
 	expected := New([]string{"aa", "bb", "cc"})
 
 	if len(result.values) != 3 {
@@ -98,7 +98,7 @@ func TestTransform(t *testing.T) {
 
 func TestNestedMap(t *testing.T) {
 	e := New([]Enumerable[int]{New([]int{1, 2, 3}), New([]int{2, 3, 4}), New([]int{3, 4, 5})})
-	result := e.Map(func(e Enumerable[int]) Enumerable[int] { return e.Map(func(i int) int { return i * 2 }) })
+	result := e.Map(func(e Enumerable[int]) Enumerable[int] { return e.Map(func(i int) int { return i * 2 }).Apply() }).Apply()
 	expected := New([]Enumerable[int]{New([]int{2, 4, 6}), New([]int{4, 6, 8}), New([]int{6, 8, 10})})
 
 	if len(result.values) != 3 {
@@ -118,7 +118,7 @@ func TestNestedMap(t *testing.T) {
 
 func TestReverse(t *testing.T) {
 	e := New([]int{1, 2, 3})
-	result := e.Reverse()
+	result := e.Reverse().Apply()
 	expected := New([]int{3, 2, 1})
 
 	if len(result.values) != 3 {
@@ -133,11 +133,86 @@ func TestReverse(t *testing.T) {
 
 func TestFilter(t *testing.T) {
 	e := New([]int{1, 2, 3})
-	result := e.Filter(func(i int) bool { return i > 1 })
+	result := e.Filter(func(i int) bool { return i > 1 }).Apply()
 	expected := New([]int{2, 3})
 
 	if len(result.values) != 2 {
 		t.Errorf("Expected 2 values, got %d", len(result.values))
+	}
+	for i, v := range result.values {
+		if v != expected.values[i] {
+			t.Errorf("Expected %d, got %d", expected.values[i], v)
+		}
+	}
+}
+
+func TestToList(t *testing.T) {
+	e := New([]int{1, 2, 3})
+	result := e.ToList()
+	expected := []int{1, 2, 3}
+
+	if len(result) != 3 {
+		t.Errorf("Expected 3 values, got %d", len(result))
+	}
+	for i, v := range result {
+		if v != expected[i] {
+			t.Errorf("Expected %d, got %d", expected[i], v)
+		}
+	}
+}
+
+func TestMapThenFilter(t *testing.T) {
+	e := New([]int{1, 2, 3})
+	result := e.Map(func(i int) int { return i * 2 }).Filter(func(i int) bool { return i > 2 }).Apply()
+	expected := New([]int{4, 6})
+
+	if len(result.values) != 2 {
+		t.Errorf("Expected 2 values, got %d", len(result.values))
+	}
+	for i, v := range result.values {
+		if v != expected.values[i] {
+			t.Errorf("Expected %d, got %d", expected.values[i], v)
+		}
+	}
+}
+
+func TestFilterThenMap(t *testing.T) {
+	e := New([]int{1, 2, 3})
+	result := e.Filter(func(i int) bool { return i > 1 }).Map(func(i int) int { return i * 2 }).Apply()
+	expected := New([]int{4, 6})
+
+	if len(result.values) != 2 {
+		t.Errorf("Expected 2 values, got %d", len(result.values))
+	}
+	for i, v := range result.values {
+		if v != expected.values[i] {
+			t.Errorf("Expected %d, got %d", expected.values[i], v)
+		}
+	}
+}
+
+func TestMapThenReverse(t *testing.T) {
+	e := New([]int{1, 2, 3})
+	result := e.Map(func(i int) int { return i * 2 }).Reverse().Apply()
+	expected := New([]int{6, 4, 2})
+
+	if len(result.values) != 3 {
+		t.Errorf("Expected 3 values, got %d", len(result.values))
+	}
+	for i, v := range result.values {
+		if v != expected.values[i] {
+			t.Errorf("Expected %d, got %d", expected.values[i], v)
+		}
+	}
+}
+
+func TestReverseThenMap(t *testing.T) {
+	e := New([]int{1, 2, 3})
+	result := e.Reverse().Map(func(i int) int { return i * 2 }).Apply()
+	expected := New([]int{6, 4, 2})
+
+	if len(result.values) != 3 {
+		t.Errorf("Expected 3 values, got %d", len(result.values))
 	}
 	for i, v := range result.values {
 		if v != expected.values[i] {
