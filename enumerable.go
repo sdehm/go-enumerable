@@ -67,15 +67,17 @@ func (e Enumerable[T]) Reverse() Enumerable[T] {
 
 // Filter an Enumerable[T] by a predicate function
 func (e Enumerable[T]) Filter(f func(T) bool) Enumerable[T] {
-	index := 0
-	for _, v := range e.values {
-		if f(v) {
-			e.values = append(e.values[:index], v)
-			index++
+	return e.lazy(func(e Enumerable[T]) Enumerable[T] {
+		index := 0
+		for _, v := range e.values {
+			if f(v) {
+				e.values = append(e.values[:index], v)
+				index++
+			}
 		}
-	}
-	e.values = e.values[:index]
-	return e
+		e.values = e.values[:index]
+		return e
+	})
 }
 
 func (e Enumerable[T]) Apply() Enumerable[T] {
