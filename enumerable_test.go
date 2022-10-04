@@ -211,3 +211,14 @@ func TestContains(t *testing.T) {
 		t.Errorf("Expected false, got true")
 	}
 }
+
+func TestContainsBy(t *testing.T) {
+	e := New([]int{1, 2, 3})
+
+	if !e.ContainsBy(func(i int) bool { return i == 1 }) {
+		t.Errorf("Expected true, got false")
+	}
+	if e.ContainsBy(func(i int) bool { return i == 4 }) {
+		t.Errorf("Expected false, got true")
+	}
+}

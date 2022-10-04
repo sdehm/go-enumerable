@@ -60,11 +60,21 @@ func (e Enumerable[T]) Filter(f func(T) bool) Enumerable[T] {
 
 // Contains returns true if the Enumerable[T] contains the value
 func (e Enumerable[T]) Contains(value T) bool {
-		for _, v := range e.Apply().values {
-			if v == value {
-				return true
-			}
+	for _, v := range e.Apply().values {
+		if v == value {
+			return true
 		}
+	}
+	return false
+}
+
+// ContainsBy returns true if the Enumerable[T] contains a value that satisfies the predicate
+func (e Enumerable[T]) ContainsBy(f func(T) bool) bool {
+	for _, v := range e.Apply().values {
+		if f(v) {
+			return true
+		}
+	}
 	return false
 }
 
