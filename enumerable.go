@@ -117,11 +117,11 @@ func (e Enumerable[T]) Contains(value T) bool {
 // Any returns true if the Enumerable[T] contains a value that satisfies the predicate
 func (e Enumerable[T]) Any(f func(T) bool) bool {
 	for _, v := range e.Apply().values {
-		if !f(v) {
-			return false
+		if f(v) {
+			return true
 		}
 	}
-	return true
+	return false
 }
 
 // All returns true if all values in the Enumerable[T] satisfy the predicate

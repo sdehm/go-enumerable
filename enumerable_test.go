@@ -212,7 +212,7 @@ func TestContains(t *testing.T) {
 	}
 }
 
-func TestContainsBy(t *testing.T) {
+func TestAny(t *testing.T) {
 	e := New([]int{1, 2, 3})
 
 	if !e.Any(func(i int) bool { return i == 1 }) {
@@ -255,7 +255,7 @@ func TestFilterThenContains(t *testing.T) {
 	}
 }
 
-func TestFilterThenContainsBy(t *testing.T) {
+func TestFilterThenAny(t *testing.T) {
 	e := New([]int{1, 2, 3})
 
 	if !e.Filter(func(i int) bool { return i > 1 }).Any(func(i int) bool { return i == 2 }) {
