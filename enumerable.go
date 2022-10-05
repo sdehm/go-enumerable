@@ -81,6 +81,22 @@ func (e Enumerable[T]) Take(n int) Enumerable[T] {
 	})
 }
 
+// Take the first n values of the Enumerable[T] that satisfy a predicate function
+// Evaluates lazily, call apply to evaluate
+func (e Enumerable[T]) TakeWhile(f func(T) bool) Enumerable[T] {
+	return e.lazy(func(Enumerable[T]) Enumerable[T] {
+		index := 0
+		for i, v := range e.values {
+			if !f(v) {
+				index = i
+				break
+			}
+		}
+		e.values = e.values[:index]
+		return e
+	})
+}
+
 // Skip the first n values of the Enumerable[T]
 // If n is greater than the length of the Enumerable[T], returns an empty Enumerable[T]
 // If n is negative, returns all but the last n values of the Enumerable[T]
@@ -100,6 +116,22 @@ func (e Enumerable[T]) Skip(n int) Enumerable[T] {
 		if reversed {
 			e = e.Reverse().Apply()
 		}
+		return e
+	})
+}
+
+// Skip the first values of the Enumerable[T] that satisfy a predicate function
+// Evaluates lazily, call apply to evaluate
+func (e Enumerable[T]) SkipWhile(f func(T) bool) Enumerable[T] {
+	return e.lazy(func(Enumerable[T]) Enumerable[T] {
+		index := 0
+		for i, v := range e.values {
+			if !f(v) {
+				index = i
+				break
+			}
+		}
+		e.values = e.values[index:]
 		return e
 	})
 }
