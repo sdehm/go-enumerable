@@ -1,15 +1,24 @@
 package enumerable
 
-import "sync"
-
 func (e Enumerable[T]) ForEachParallel(f func(T)) {
-	var wg sync.WaitGroup
-	wg.Add(len(e.values))
-	for _, v := range e.values {
-		go func(v T) {
-			f(v)
-			wg.Done()
-		}(v)
+	jobs := make(chan T, len(e.values))
+	results := make(chan bool, len(e.values))
+
+	go func() {
+		for _, value := range e.values {
+			jobs <- value
+		}
+		close(jobs)
+	}()
+
+	go worker(jobs, results, f)
+	<-results
+}
+
+func worker[T any](jobs <-chan T, results chan<- bool, f func(T)) {
+	for j := range jobs {
+		f(j)
+		results <- true
 	}
-	wg.Wait()
+	close(results)
 }
