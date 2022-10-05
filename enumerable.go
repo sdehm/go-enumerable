@@ -58,6 +58,29 @@ func (e Enumerable[T]) Filter(f func(T) bool) Enumerable[T] {
 	})
 }
 
+// Take the first n values of the Enumerable[T]
+// If n is greater than the length of the Enumerable[T], returns the Enumerable[T]
+// If n is negative, returns the last n values of the Enumerable[T]
+// Evaluates lazily, call apply to evaluate
+func (e Enumerable[T]) Take(n int) Enumerable[T] {
+	return e.lazy(func(Enumerable[T]) Enumerable[T] {
+		reversed := false
+		if n < 0 {
+			e = e.Reverse().Apply()
+			n = -n
+			reversed = true
+		}
+		if n > len(e.values) {
+			n = len(e.values)
+		}
+		e.values = e.values[:n]
+		if reversed {
+			e = e.Reverse().Apply()
+		}
+		return e
+	})
+}
+
 // Contains returns true if the Enumerable[T] contains the value
 func (e Enumerable[T]) Contains(value T) bool {
 	for _, v := range e.Apply().values {

@@ -291,3 +291,48 @@ func TestAll(t *testing.T) {
 		t.Errorf("Expected false, got true")
 	}
 }
+
+func TestTake(t *testing.T) {
+	e := New([]int{1, 2, 3})
+	result := e.Take(2).Apply()
+	expected := New([]int{1, 2})
+
+	if len(result.values) != 2 {
+		t.Errorf("Expected 2 values, got %d", len(result.values))
+	}
+	for i, v := range result.values {
+		if v != expected.values[i] {
+			t.Errorf("Expected %d, got %d", expected.values[i], v)
+		}
+	}
+}
+
+func TestTakeOverflow(t *testing.T) {
+	e := New([]int{1, 2, 3})
+	result := e.Take(5).Apply()
+	expected := New([]int{1, 2, 3})
+
+	if len(result.values) != 3 {
+		t.Errorf("Expected 3 values, got %d", len(result.values))
+	}
+	for i, v := range result.values {
+		if v != expected.values[i] {
+			t.Errorf("Expected %d, got %d", expected.values[i], v)
+		}
+	}
+}
+
+func TestTakeNegative(t *testing.T) {
+	e := New([]int{1, 2, 3})
+	result := e.Take(-2).Apply()
+	expected := New([]int{2, 3})
+
+	if len(result.values) != 2 {
+		t.Errorf("Expected 0 values, got %d", len(result.values))
+	}
+	for i, v := range result.values {
+		if v != expected.values[i] {
+			t.Errorf("Expected %d, got %d", expected.values[i], v)
+		}
+	}
+}
