@@ -336,3 +336,48 @@ func TestTakeNegative(t *testing.T) {
 		}
 	}
 }
+
+func TestSkip(t *testing.T) {
+	e := New([]int{1, 2, 3})
+	result := e.Skip(2).Apply()
+	expected := New([]int{3})
+
+	if len(result.values) != 1 {
+		t.Errorf("Expected 1 values, got %d", len(result.values))
+	}
+	for i, v := range result.values {
+		if v != expected.values[i] {
+			t.Errorf("Expected %d, got %d", expected.values[i], v)
+		}
+	}
+}
+
+func TestSkipOverflow(t *testing.T) {
+	e := New([]int{1, 2, 3})
+	result := e.Skip(5).Apply()
+	expected := New([]int{})
+
+	if len(result.values) != 0 {
+		t.Errorf("Expected 0 values, got %d", len(result.values))
+	}
+	for i, v := range result.values {
+		if v != expected.values[i] {
+			t.Errorf("Expected %d, got %d", expected.values[i], v)
+		}
+	}
+}
+
+func TestSkipNegative(t *testing.T) {
+	e := New([]int{1, 2, 3})
+	result := e.Skip(-2).Apply()
+	expected := New([]int{1})
+
+	if len(result.values) != 1 {
+		t.Errorf("Expected 1 values, got %d", len(result.values))
+	}
+	for i, v := range result.values {
+		if v != expected.values[i] {
+			t.Errorf("Expected %d, got %d", expected.values[i], v)
+		}
+	}
+}
