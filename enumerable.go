@@ -71,11 +71,22 @@ func (e Enumerable[T]) Contains(value T) bool {
 // Any returns true if the Enumerable[T] contains a value that satisfies the predicate
 func (e Enumerable[T]) Any(f func(T) bool) bool {
 	for _, v := range e.Apply().values {
-		if f(v) {
-			return true
+		if !f(v) {
+			return false
 		}
 	}
-	return false
+	return true
+}
+
+// All returns true if all values in the Enumerable[T] satisfy the predicate
+func (e Enumerable[T]) All(f func(T) bool) bool {
+	result := true
+	for _, v := range e.Apply().values {
+		if !f(v) {
+			result = false
+		}
+	}
+	return result
 }
 
 // Reduce the Enumerable[T] to a single value

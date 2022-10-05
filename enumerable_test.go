@@ -280,3 +280,14 @@ func TestFilterThenTransform(t *testing.T) {
 		}
 	}
 }
+
+func TestAll(t *testing.T) {
+	e := New([]int{1, 2, 3})
+
+	if !e.All(func(i int) bool { return i > 0 }) {
+		t.Errorf("Expected true, got false")
+	}
+	if e.All(func(i int) bool { return i > 2 }) {
+		t.Errorf("Expected false, got true")
+	}
+}
