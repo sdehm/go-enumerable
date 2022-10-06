@@ -37,7 +37,7 @@ func (e Enumerable[T]) ForEachParallel(f func(T), numWorkers ...int) {
 func (e Enumerable[T]) MapParallel(f func(T) T, numWorkers ...int) Enumerable[T] {
 	workers := setNumWorkers(numWorkers...)
 	jobs := buildJobQueue(e)
-	results := make(chan workItem[T], 3)
+	results := make(chan workItem[T], len(e.values))
 
 	// start workers
 	wg := sync.WaitGroup{}
