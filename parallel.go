@@ -12,23 +12,12 @@ func (e Enumerable[T]) ForEachParallel(f func(T), numWorkers ...int) {
 	jobs := buildJobQueue(e)
 	results := make(chan struct{}, len(e.values))
 
-	// start workers
-	wg := sync.WaitGroup{}
-	for i := 0; i < workers; i++ {
-		wg.Add(1)
-		go func() {
-			for j := range jobs {
-				f(j.value)
-			}
-			wg.Done()
-		}()
+	workerFunc := func(_results chan struct{}, j workItem[T]) {
+		f(j.value)
+		// results <- struct{}{}
 	}
 
-	// wait for all workers to finish
-	go func() {
-		wg.Wait()
-		close(results)
-	}()
+	startWorkers(jobs, results, workerFunc, workers)
 
 	// wait for all results to be processed
 	<-results
@@ -39,23 +28,11 @@ func (e Enumerable[T]) MapParallel(f func(T) T, numWorkers ...int) Enumerable[T]
 	jobs := buildJobQueue(e)
 	results := make(chan workItem[T], len(e.values))
 
-	// start workers
-	wg := sync.WaitGroup{}
-	for i := 0; i < workers; i++ {
-		wg.Add(1)
-		go func() {
-			for j := range jobs {
-				results <- workItem[T]{f(j.value), j.index}
-			}
-			wg.Done()
-		}()
+	workerFunc := func(results chan workItem[T], j workItem[T]) {
+		results <- workItem[T]{f(j.value), j.index}
 	}
 
-	// wait for all workers to finish
-	go func() {
-		wg.Wait()
-		close(results)
-	}()
+	startWorkers(jobs, results, workerFunc, workers)
 
 	for r := range results {
 		e.values[r.index] = r.value
@@ -87,4 +64,24 @@ func buildJobQueue[T comparable](e Enumerable[T]) chan workItem[T] {
 		close(jobs)
 	}()
 	return jobs
+}
+
+func startWorkers[T comparable, R any](jobs chan workItem[T], results chan R, f func(chan R, workItem[T]), workers int) {
+	// start workers
+	wg := sync.WaitGroup{}
+	for i := 0; i < workers; i++ {
+		wg.Add(1)
+		go func() {
+			for j := range jobs {
+				f(results, j)
+			}
+			wg.Done()
+		}()
+	}
+
+	// wait for all workers to finish
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
 }
