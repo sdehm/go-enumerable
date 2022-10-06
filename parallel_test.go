@@ -1,6 +1,7 @@
 package enumerable
 
 import (
+	"strconv"
 	"sync/atomic"
 	"testing"
 	"time"
@@ -34,6 +35,27 @@ func TestMapParallel(t *testing.T) {
 	for i, v := range result.values {
 		if v != expected.values[i] {
 			t.Errorf("Expected %d, got %d", expected.values[i], v)
+		}
+	}
+}
+
+func TestTransformParallel(t *testing.T) {
+	e := New([]int{1, 2, 3})
+	result := TransformParallel(e, func(i int) string {
+		if i == 2 {
+			// sleep for 10 ms to make sure order is maintained
+			time.Sleep(time.Millisecond * 10)
+		}
+		return strconv.Itoa(i)
+	}).Apply()
+	expected := New([]string{"1", "2", "3"})
+
+	if len(result.values) != 3 {
+		t.Errorf("Expected 3 values, got %d", len(result.values))
+	}
+	for i, v := range result.values {
+		if v != expected.values[i] {
+			t.Errorf("Expected %s, got %s", expected.values[i], v)
 		}
 	}
 }

@@ -53,6 +53,32 @@ func (e Enumerable[T]) MapParallel(f func(T) T, numWorkers ...int) Enumerable[T]
 	return e
 }
 
+func TransformParallel[T comparable, U comparable](e Enumerable[T], f func(T) U, numWorkers ...int) Enumerable[U] {
+	result := New(make([]U, len(e.values)))
+	workers := setNumWorkers(numWorkers...)
+	jobs := buildJobQueue(e)
+	results := make(chan workItem[U], len(e.values))
+
+	workerFunc := func(j workItem[T]) {
+		results <- workItem[U]{f(j.value), j.index}
+	}
+
+	wg := sync.WaitGroup{}
+	startWorkers(jobs, &wg, workerFunc, workers)
+
+	// wait for all workers to finish
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+
+	for r := range results {
+		result.values[r.index] = r.value
+	}
+
+	return result
+}
+
 type workItem[T comparable] struct {
 	value T
 	index int
