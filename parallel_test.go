@@ -59,3 +59,10 @@ func TestTransformParallel(t *testing.T) {
 		}
 	}
 }
+
+func TestSetNumWorkers(t *testing.T) {
+	workers := setNumWorkers(1)
+	if workers != 1 {
+		t.Errorf("Expected 1, got %d", workers)
+	}
+}
