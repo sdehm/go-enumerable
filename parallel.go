@@ -8,16 +8,21 @@ import (
 func (e Enumerable[T]) ForEachParallel(f func(T), numWorkers ...int) {
 	// set number of workers to GOMAXPROCS by default
 	workers := setNumWorkers(numWorkers...)
-
 	jobs := buildJobQueue(e)
 	results := make(chan struct{}, len(e.values))
 
-	workerFunc := func(_results chan struct{}, j workItem[T]) {
+	workerFunc := func(j workItem[T]) {
 		f(j.value)
-		// results <- struct{}{}
 	}
 
-	startWorkers(jobs, results, workerFunc, workers)
+	wg := sync.WaitGroup{}
+	startWorkers(jobs, &wg, workerFunc, workers)
+
+	// wait for all workers to finish
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
 
 	// wait for all results to be processed
 	<-results
@@ -28,11 +33,18 @@ func (e Enumerable[T]) MapParallel(f func(T) T, numWorkers ...int) Enumerable[T]
 	jobs := buildJobQueue(e)
 	results := make(chan workItem[T], len(e.values))
 
-	workerFunc := func(results chan workItem[T], j workItem[T]) {
+	workerFunc := func(j workItem[T]) {
 		results <- workItem[T]{f(j.value), j.index}
 	}
 
-	startWorkers(jobs, results, workerFunc, workers)
+	wg := sync.WaitGroup{}
+	startWorkers(jobs, &wg, workerFunc, workers)
+
+	// wait for all workers to finish
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
 
 	for r := range results {
 		e.values[r.index] = r.value
@@ -66,22 +78,15 @@ func buildJobQueue[T comparable](e Enumerable[T]) chan workItem[T] {
 	return jobs
 }
 
-func startWorkers[T comparable, R any](jobs chan workItem[T], results chan R, f func(chan R, workItem[T]), workers int) {
+func startWorkers[T comparable](jobs chan workItem[T], wg *sync.WaitGroup, f func(workItem[T]), workers int) {
 	// start workers
-	wg := sync.WaitGroup{}
 	for i := 0; i < workers; i++ {
 		wg.Add(1)
 		go func() {
 			for j := range jobs {
-				f(results, j)
+				f(j)
 			}
 			wg.Done()
 		}()
 	}
-
-	// wait for all workers to finish
-	go func() {
-		wg.Wait()
-		close(results)
-	}()
 }
