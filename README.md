@@ -8,7 +8,7 @@ I am sure that there have been many similar libraries made like this but I avoid
 ## Future Features
 
 - [x] Lazy evaluation
-- [ ] Parallel evaluation
+- [x] Parallel evaluation
 - [ ] More functions
 - [ ] Performance improvements and analysis
 
