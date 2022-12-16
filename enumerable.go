@@ -1,5 +1,11 @@
 package enumerable
 
+// nested enumerable interface
+type IEnumerable[T comparable] interface {
+	Append(value T) Enumerable[T]
+	Apply() Enumerable[T]
+}
+
 type Enumerable[T comparable] struct {
 	values []T
 	stack  []func(Enumerable[T]) Enumerable[T]
