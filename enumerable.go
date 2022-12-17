@@ -227,11 +227,8 @@ func Transform[T comparable, U comparable](e IEnumerable[T], f func(T) U) IEnume
 // Apply all the functions from the stack to the IEnumerable[T]
 func (e Enumerable[T]) Apply() IEnumerable[T] {
 	for _, f := range e.stack {
-		// remove the function from the stack
-		if len(e.stack) > 0 {
-			// e.stack = e.stack[:len(e.stack)-1]
-			e.stack = e.stack[1:]
-		}
+		// recreate the enumerable without the stack
+		e = Enumerable[T]{values: e.values}
 		e = f(e).(Enumerable[T])
 	}
 	return e
