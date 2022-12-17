@@ -8,7 +8,7 @@ import (
 func (e Enumerable[T]) ForEachParallel(f func(T), numWorkers ...int) {
 	// set number of workers to GOMAXPROCS by default
 	workers := setNumWorkers(numWorkers...)
-	jobs := buildJobQueue(e)
+	jobs := buildJobQueue[T](e)
 	results := make(chan struct{}, len(e.values))
 
 	workerFunc := func(j workItem[T]) {
@@ -28,9 +28,9 @@ func (e Enumerable[T]) ForEachParallel(f func(T), numWorkers ...int) {
 	<-results
 }
 
-func (e Enumerable[T]) MapParallel(f func(T) T, numWorkers ...int) Enumerable[T] {
+func (e Enumerable[T]) MapParallel(f func(T) T, numWorkers ...int) IEnumerable[T] {
 	workers := setNumWorkers(numWorkers...)
-	jobs := buildJobQueue(e)
+	jobs := buildJobQueue[T](e)
 	results := make(chan workItem[T], len(e.values))
 
 	workerFunc := func(j workItem[T]) {
@@ -53,11 +53,11 @@ func (e Enumerable[T]) MapParallel(f func(T) T, numWorkers ...int) Enumerable[T]
 	return e
 }
 
-func TransformParallel[T comparable, U comparable](e Enumerable[T], f func(T) U, numWorkers ...int) Enumerable[U] {
-	result := New(make([]U, len(e.values))).(Enumerable[U])
+func TransformParallel[T comparable, U comparable](e IEnumerable[T], f func(T) U, numWorkers ...int) IEnumerable[U] {
+	result := New(make([]U, len(e.getValues())))
 	workers := setNumWorkers(numWorkers...)
 	jobs := buildJobQueue(e)
-	results := make(chan workItem[U], len(e.values))
+	results := make(chan workItem[U], len(e.getValues()))
 
 	workerFunc := func(j workItem[T]) {
 		results <- workItem[U]{f(j.value), j.index}
@@ -73,7 +73,7 @@ func TransformParallel[T comparable, U comparable](e Enumerable[T], f func(T) U,
 	}()
 
 	for r := range results {
-		result.values[r.index] = r.value
+		result.getValues()[r.index] = r.value
 	}
 
 	return result
@@ -92,11 +92,11 @@ func setNumWorkers(numWorkers ...int) int {
 	return runtime.GOMAXPROCS(0)
 }
 
-func buildJobQueue[T comparable](e Enumerable[T]) chan workItem[T] {
-	jobs := make(chan workItem[T], len(e.values))
+func buildJobQueue[T comparable](e IEnumerable[T]) chan workItem[T] {
+	jobs := make(chan workItem[T], len(e.getValues()))
 	// populate jobs channel
 	go func() {
-		for i, v := range e.values {
+		for i, v := range e.getValues() {
 			jobs <- workItem[T]{v, i}
 		}
 		close(jobs)

@@ -26,7 +26,7 @@ type IEnumerable[T comparable] interface {
 	getValues() []T
 	// Parallel functions
 	ForEachParallel(f func(T), numWorkers ...int)
-	MapParallel(f func(T) T, numWorkers ...int) Enumerable[T]
+	MapParallel(f func(T) T, numWorkers ...int) IEnumerable[T]
 }
 
 func (e Enumerable[T]) getValues() []T {

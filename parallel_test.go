@@ -1,6 +1,7 @@
 package enumerable
 
 import (
+	"strconv"
 	"sync/atomic"
 	"testing"
 	"time"
@@ -38,30 +39,30 @@ func TestMapParallel(t *testing.T) {
 	}
 }
 
-// func TestTransformParallel(t *testing.T) {
-// 	e := New([]int{1, 2, 3})
-// 	result := TransformParallel(e, func(i int) string {
-// 		if i == 2 {
-// 			// sleep for 10 ms to make sure order is maintained
-// 			time.Sleep(time.Millisecond * 10)
-// 		}
-// 		return strconv.Itoa(i)
-// 	}).Apply()
-// 	expected := New([]string{"1", "2", "3"})
+func TestTransformParallel(t *testing.T) {
+	e := New([]int{1, 2, 3})
+	result := TransformParallel(e, func(i int) string {
+		if i == 2 {
+			// sleep for 10 ms to make sure order is maintained
+			time.Sleep(time.Millisecond * 10)
+		}
+		return strconv.Itoa(i)
+	}).Apply()
+	expected := New([]string{"1", "2", "3"})
 
-// 	if len(result.values) != 3 {
-// 		t.Errorf("Expected 3 values, got %d", len(result.values))
-// 	}
-// 	for i, v := range result.values {
-// 		if v != expected.values[i] {
-// 			t.Errorf("Expected %s, got %s", expected.values[i], v)
-// 		}
-// 	}
-// }
+	if len(result.getValues()) != 3 {
+		t.Errorf("Expected 3 values, got %d", len(result.getValues()))
+	}
+	for i, v := range result.getValues() {
+		if v != expected.getValues()[i] {
+			t.Errorf("Expected %s, got %s", expected.getValues()[i], v)
+		}
+	}
+}
 
-// func TestSetNumWorkers(t *testing.T) {
-// 	workers := setNumWorkers(1)
-// 	if workers != 1 {
-// 		t.Errorf("Expected 1, got %d", workers)
-// 	}
-// }
+func TestSetNumWorkers(t *testing.T) {
+	workers := setNumWorkers(1)
+	if workers != 1 {
+		t.Errorf("Expected 1, got %d", workers)
+	}
+}
