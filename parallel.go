@@ -54,7 +54,7 @@ func (e Enumerable[T]) MapParallel(f func(T) T, numWorkers ...int) Enumerable[T]
 }
 
 func TransformParallel[T comparable, U comparable](e Enumerable[T], f func(T) U, numWorkers ...int) Enumerable[U] {
-	result := New(make([]U, len(e.values)))
+	result := New(make([]U, len(e.values))).(Enumerable[U])
 	workers := setNumWorkers(numWorkers...)
 	jobs := buildJobQueue(e)
 	results := make(chan workItem[U], len(e.values))
