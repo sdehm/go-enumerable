@@ -15,12 +15,17 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.19
+
+    - name: Install go1.20rc1
       run: |
-        curl -OL https://go.dev/dl/go1.20rc1.linux-amd64.tar.gz
-        tar -C /usr/local -xzf go1.20rc1.linux-amd64.tar.gz
-        export PATH=$PATH:/usr/local/go/bin
+        go install golang.org/dl/go1.20rc1@latest
+        go1.20rc1 download
+
     - name: Build
-      run: go build -v ./...
+      run: go1.20rc1 build -v ./...
 
     - name: Test
-      run: go test -v ./...
+      run: go1.20rc1 test -v ./...
