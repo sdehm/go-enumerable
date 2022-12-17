@@ -81,20 +81,20 @@ func TestForEach(t *testing.T) {
 	}
 }
 
-// func TestTransform(t *testing.T) {
-// 	e := New([]int{1, 2, 3})
-// 	result := Transform(e, func(i int) string { return strconv.Itoa(i) })
-// 	expected := New([]string{"1", "2", "3"})
+func TestTransform(t *testing.T) {
+	e := New([]int{1, 2, 3})
+	result := Transform(e, func(i int) string { return strconv.Itoa(i) })
+	expected := New([]string{"1", "2", "3"})
 
-// 	if len(result.getValues()) != 3 {
-// 		t.Errorf("Expected 3 values, got %d", len(result.getValues()))
-// 	}
-// 	for i, v := range result.getValues() {
-// 		if v != expected.getValues()[i] {
-// 			t.Errorf("Expected %s, got %s", expected.getValues()[i], v)
-// 		}
-// 	}
-// }
+	if len(result.getValues()) != 3 {
+		t.Errorf("Expected 3 values, got %d", len(result.getValues()))
+	}
+	for i, v := range result.getValues() {
+		if v != expected.getValues()[i] {
+			t.Errorf("Expected %s, got %s", expected.getValues()[i], v)
+		}
+	}
+}
 
 func TestReverse(t *testing.T) {
 	e := New([]int{1, 2, 3})
@@ -441,7 +441,6 @@ func TestSkipWhileFalse(t *testing.T) {
 		}
 	}
 }
-
 
 func TestNestedAppend(t *testing.T) {
 	e1 := New([]int{1, 2, 3})
