@@ -24,6 +24,9 @@ type IEnumerable[T comparable] interface {
 	ToList() []T
 	lazy(f func(IEnumerable[T]) IEnumerable[T]) IEnumerable[T]
 	getValues() []T
+	// Parallel functions
+	ForEachParallel(f func(T), numWorkers ...int)
+	MapParallel(f func(T) T, numWorkers ...int) Enumerable[T]
 }
 
 func (e Enumerable[T]) getValues() []T {
