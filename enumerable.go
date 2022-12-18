@@ -24,13 +24,11 @@ type IEnumerable[T comparable] interface {
 	ToList() []T
 	lazy(f func(IEnumerable[T]) IEnumerable[T]) IEnumerable[T]
 	getValues() []T
+	setValues(values []T) IEnumerable[T]
+	reverseValues() IEnumerable[T]
 	// Parallel functions
 	ForEachParallel(f func(T), numWorkers ...int)
 	MapParallel(f func(T) T, numWorkers ...int) IEnumerable[T]
-}
-
-func (e Enumerable[T]) getValues() []T {
-	return e.values
 }
 
 // Create a new IEnumerable[T] from a slice of T
@@ -42,9 +40,7 @@ func New[T comparable](values []T) IEnumerable[T] {
 // Evaluates lazily, call apply to evaluate
 func (e Enumerable[T]) Append(value T) IEnumerable[T] {
 	return e.lazy(func(e IEnumerable[T]) IEnumerable[T] {
-		ee := e.(Enumerable[T])
-		ee.values = append(ee.values, value)
-		return ee
+		return e.setValues(append(e.getValues(), value))
 	})
 }
 
@@ -52,11 +48,11 @@ func (e Enumerable[T]) Append(value T) IEnumerable[T] {
 // Evaluates lazily, call apply to evaluate
 func (e Enumerable[T]) Map(f func(T) T) IEnumerable[T] {
 	return e.lazy(func(e IEnumerable[T]) IEnumerable[T] {
-		ee := e.(Enumerable[T])
-		for i, v := range ee.values {
-			ee.values[i] = f(v)
+		values := e.getValues()
+		for i, v := range values {
+			values[i] = f(v)
 		}
-		return ee
+		return e.setValues(values)
 	})
 }
 
@@ -64,12 +60,7 @@ func (e Enumerable[T]) Map(f func(T) T) IEnumerable[T] {
 // Evaluates lazily, call apply to evaluate
 func (e Enumerable[T]) Reverse() IEnumerable[T] {
 	return e.lazy(func(e IEnumerable[T]) IEnumerable[T] {
-		ee := e.(Enumerable[T])
-		result := New([]T{}).(Enumerable[T])
-		for i := len(ee.values) - 1; i >= 0; i-- {
-			result.values = append(result.values, ee.values[i])
-		}
-		return result
+		return e.reverseValues()
 	})
 }
 
@@ -77,16 +68,15 @@ func (e Enumerable[T]) Reverse() IEnumerable[T] {
 // Evaluates lazily, call apply to evaluate
 func (e Enumerable[T]) Filter(f func(T) bool) IEnumerable[T] {
 	return e.lazy(func(e IEnumerable[T]) IEnumerable[T] {
-		ee := e.(Enumerable[T])
+		values := e.getValues()
 		index := 0
-		for _, v := range ee.values {
+		for _, v := range values {
 			if f(v) {
-				ee.values = append(ee.values[:index], v)
+				values = append(values[:index], v)
 				index++
 			}
 		}
-		ee.values = ee.values[:index]
-		return ee
+		return e.setValues(values[:index])
 	})
 }
 
@@ -95,38 +85,39 @@ func (e Enumerable[T]) Filter(f func(T) bool) IEnumerable[T] {
 // If n is negative, returns the last n values of the IEnumerable[T]
 // Evaluates lazily, call apply to evaluate
 func (e Enumerable[T]) Take(n int) IEnumerable[T] {
-	return e.lazy(func(i IEnumerable[T]) IEnumerable[T] {
-		ee := i.(Enumerable[T])
+	return e.lazy(func(e IEnumerable[T]) IEnumerable[T] {
+		values := e.getValues()
 		reversed := false
 		if n < 0 {
-			ee = ee.Reverse().Apply().(Enumerable[T])
+			values = reverse(values)
 			n = -n
 			reversed = true
 		}
-		if n > len(ee.values) {
-			n = len(ee.values)
+		if n > len(values) {
+			n = len(values)
 		}
-		ee.values = ee.values[:n]
+		values = values[:n]
 		if reversed {
-			ee = ee.Reverse().Apply().(Enumerable[T])
+			values = reverse(values)
 		}
-		return ee
+		return e.setValues(values)
 	})
 }
 
 // Take the first n values of the IEnumerable[T] that satisfy a predicate function
 // Evaluates lazily, call apply to evaluate
 func (e Enumerable[T]) TakeWhile(f func(T) bool) IEnumerable[T] {
-	return e.lazy(func(IEnumerable[T]) IEnumerable[T] {
+	return e.lazy(func(e IEnumerable[T]) IEnumerable[T] {
+		values := e.getValues()
 		index := 0
-		for i, v := range e.values {
+		for i, v := range values {
 			if !f(v) {
 				index = i
 				break
 			}
 		}
-		e.values = e.values[:index]
-		return e
+		values = values[:index]
+		return e.setValues(values)
 	})
 }
 
@@ -135,37 +126,39 @@ func (e Enumerable[T]) TakeWhile(f func(T) bool) IEnumerable[T] {
 // If n is negative, returns all but the last n values of the IEnumerable[T]
 // Evaluates lazily, call apply to evaluate
 func (e Enumerable[T]) Skip(n int) IEnumerable[T] {
-	return e.lazy(func(IEnumerable[T]) IEnumerable[T] {
+	return e.lazy(func(e IEnumerable[T]) IEnumerable[T] {
+		values := e.getValues()
 		reversed := false
 		if n < 0 {
-			e = e.Reverse().Apply().(Enumerable[T])
+			values = reverse(values)
 			n = -n
 			reversed = true
 		}
-		if n > len(e.values) {
-			n = len(e.values)
+		if n > len(values) {
+			n = len(values)
 		}
-		e.values = e.values[n:]
+		values = values[n:]
 		if reversed {
-			e = e.Reverse().Apply().(Enumerable[T])
+			values = reverse(values)
 		}
-		return e
+		return e.setValues(values)
 	})
 }
 
 // Skip the first values of the IEnumerable[T] that satisfy a predicate function
 // Evaluates lazily, call apply to evaluate
 func (e Enumerable[T]) SkipWhile(f func(T) bool) IEnumerable[T] {
-	return e.lazy(func(IEnumerable[T]) IEnumerable[T] {
+	return e.lazy(func(e IEnumerable[T]) IEnumerable[T] {
+		values := e.getValues()
 		index := 0
-		for i, v := range e.values {
+		for i, v := range values {
 			if !f(v) {
 				index = i
 				break
 			}
 		}
-		e.values = e.values[index:]
-		return e
+		values = values[index:]
+		return e.setValues(values)
 	})
 }
 
@@ -245,4 +238,25 @@ func (e Enumerable[T]) ToList() []T {
 func (e Enumerable[T]) lazy(f func(IEnumerable[T]) IEnumerable[T]) IEnumerable[T] {
 	e.stack = append(e.stack, f)
 	return e
+}
+
+func (e Enumerable[T]) getValues() []T {
+	return e.values
+}
+
+func (e Enumerable[T]) setValues(values []T) IEnumerable[T] {
+	e.values = values
+	return e
+}
+
+func (e Enumerable[T]) reverseValues() IEnumerable[T] {
+	e.values = reverse(e.values)
+	return e
+}
+
+func reverse[T comparable](values []T) []T {
+	for i, j := 0, len(values)-1; i < j; i, j = i+1, j-1 {
+		values[i], values[j] = values[j], values[i]
+	}
+	return values
 }
