@@ -212,12 +212,13 @@ func (e Enumerable[T]) ForEach(f func(T)) {
 
 // Map a function over the IEnumerable[T] but return a new IEnumerable of a different type
 func Transform[T comparable, U comparable](e IEnumerable[T], f func(T) U) IEnumerable[U] {
-	result := New([]U{})
-	for _, v := range e.Apply().getValues() {
-		// TODO: Lazy evaluation broken here
-		result = result.Append(f(v))
+	// TODO: Lazy evaluation broken here, would need some way to convert the stack to the new type
+	values := e.Apply().getValues()
+	newValues := make([]U, len(values))
+	for i, v := range values {
+		newValues[i] = f(v)
 	}
-	return result.Apply()
+	return New(newValues)
 }
 
 // Apply all the functions from the stack to the IEnumerable[T]
