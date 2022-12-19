@@ -5,7 +5,7 @@ import (
 	"sync"
 )
 
-func (e Enumerable[T]) ForEachParallel(f func(T), numWorkers ...int) {
+func (e enumerable[T]) ForEachParallel(f func(T), numWorkers ...int) {
 	// set number of workers to GOMAXPROCS by default
 	workers := setNumWorkers(numWorkers...)
 	jobs := buildJobQueue[T](e)
@@ -28,7 +28,7 @@ func (e Enumerable[T]) ForEachParallel(f func(T), numWorkers ...int) {
 	<-results
 }
 
-func (e Enumerable[T]) MapParallel(f func(T) T, numWorkers ...int) IEnumerable[T] {
+func (e enumerable[T]) MapParallel(f func(T) T, numWorkers ...int) Enumerable[T] {
 	workers := setNumWorkers(numWorkers...)
 	jobs := buildJobQueue[T](e)
 	results := make(chan workItem[T], len(e.values))
@@ -53,7 +53,7 @@ func (e Enumerable[T]) MapParallel(f func(T) T, numWorkers ...int) IEnumerable[T
 	return e
 }
 
-func TransformParallel[T comparable, U comparable](e IEnumerable[T], f func(T) U, numWorkers ...int) IEnumerable[U] {
+func TransformParallel[T comparable, U comparable](e Enumerable[T], f func(T) U, numWorkers ...int) Enumerable[U] {
 	result := New(make([]U, len(e.getValues())))
 	workers := setNumWorkers(numWorkers...)
 	jobs := buildJobQueue(e)
@@ -92,7 +92,7 @@ func setNumWorkers(numWorkers ...int) int {
 	return runtime.GOMAXPROCS(0)
 }
 
-func buildJobQueue[T comparable](e IEnumerable[T]) chan workItem[T] {
+func buildJobQueue[T comparable](e Enumerable[T]) chan workItem[T] {
 	jobs := make(chan workItem[T], len(e.getValues()))
 	// populate jobs channel
 	go func() {

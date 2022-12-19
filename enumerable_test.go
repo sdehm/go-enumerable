@@ -446,9 +446,9 @@ func TestNestedAppend(t *testing.T) {
 	e1 := New([]int{1, 2, 3})
 	e2 := New([]int{4, 5, 6})
 	e3 := New([]int{7, 8, 9})
-	e := New([]IEnumerable[int]{e1, e2})
+	e := New([]Enumerable[int]{e1, e2})
 	result := e.Append(e3).Apply()
-	expected := New([]IEnumerable[int]{e1, e2, e3})
+	expected := New([]Enumerable[int]{e1, e2, e3})
 	if len(result.getValues()) != 3 {
 		t.Errorf("Expected 3 values, got %d", len(result.getValues()))
 	}
