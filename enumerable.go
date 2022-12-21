@@ -31,12 +31,12 @@ type Enumerable[T comparable] interface {
 	MapParallel(f func(T) T, numWorkers ...int) Enumerable[T]
 }
 
-// Create a new IEnumerable[T] from a slice of T
+// Create a new Enumerable[T] from a slice of T
 func New[T comparable](values []T) Enumerable[T] {
 	return enumerable[T]{values, []func(Enumerable[T]) Enumerable[T]{}}
 }
 
-// Append a value to the IEnumerable[T] and return a new IEnumerable[T]
+// Append a value to the Enumerable[T] and return a new Enumerable[T]
 // Evaluates lazily, call apply to evaluate
 func (e enumerable[T]) Append(value T) Enumerable[T] {
 	return e.lazy(func(e Enumerable[T]) Enumerable[T] {
@@ -44,7 +44,7 @@ func (e enumerable[T]) Append(value T) Enumerable[T] {
 	})
 }
 
-// Map a function over the IEnumerable[T], returning a new IEnumerable[T]
+// Map a function over the Enumerable[T], returning a new Enumerable[T]
 // Evaluates lazily, call apply to evaluate
 func (e enumerable[T]) Map(f func(T) T) Enumerable[T] {
 	return e.lazy(func(e Enumerable[T]) Enumerable[T] {
@@ -56,7 +56,7 @@ func (e enumerable[T]) Map(f func(T) T) Enumerable[T] {
 	})
 }
 
-// Reverse the order of the IEnumerable[T]
+// Reverse the order of the Enumerable[T]
 // Evaluates lazily, call apply to evaluate
 func (e enumerable[T]) Reverse() Enumerable[T] {
 	return e.lazy(func(e Enumerable[T]) Enumerable[T] {
@@ -64,7 +64,7 @@ func (e enumerable[T]) Reverse() Enumerable[T] {
 	})
 }
 
-// Filter an IEnumerable[T] by a predicate function
+// Filter an Enumerable[T] by a predicate function
 // Evaluates lazily, call apply to evaluate
 func (e enumerable[T]) Filter(f func(T) bool) Enumerable[T] {
 	return e.lazy(func(e Enumerable[T]) Enumerable[T] {
@@ -80,9 +80,9 @@ func (e enumerable[T]) Filter(f func(T) bool) Enumerable[T] {
 	})
 }
 
-// Take the first n values of the IEnumerable[T]
-// If n is greater than the length of the IEnumerable[T], returns the IEnumerable[T]
-// If n is negative, returns the last n values of the IEnumerable[T]
+// Take the first n values of the Enumerable[T]
+// If n is greater than the length of the Enumerable[T], returns the Enumerable[T]
+// If n is negative, returns the last n values of the Enumerable[T]
 // Evaluates lazily, call apply to evaluate
 func (e enumerable[T]) Take(n int) Enumerable[T] {
 	return e.lazy(func(e Enumerable[T]) Enumerable[T] {
@@ -104,7 +104,7 @@ func (e enumerable[T]) Take(n int) Enumerable[T] {
 	})
 }
 
-// Take the first n values of the IEnumerable[T] that satisfy a predicate function
+// Take the first n values of the Enumerable[T] that satisfy a predicate function
 // Evaluates lazily, call apply to evaluate
 func (e enumerable[T]) TakeWhile(f func(T) bool) Enumerable[T] {
 	return e.lazy(func(e Enumerable[T]) Enumerable[T] {
@@ -121,9 +121,9 @@ func (e enumerable[T]) TakeWhile(f func(T) bool) Enumerable[T] {
 	})
 }
 
-// Skip the first n values of the IEnumerable[T]
-// If n is greater than the length of the IEnumerable[T], returns an empty IEnumerable[T]
-// If n is negative, returns all but the last n values of the IEnumerable[T]
+// Skip the first n values of the Enumerable[T]
+// If n is greater than the length of the Enumerable[T], returns an empty Enumerable[T]
+// If n is negative, returns all but the last n values of the Enumerable[T]
 // Evaluates lazily, call apply to evaluate
 func (e enumerable[T]) Skip(n int) Enumerable[T] {
 	return e.lazy(func(e Enumerable[T]) Enumerable[T] {
@@ -145,7 +145,7 @@ func (e enumerable[T]) Skip(n int) Enumerable[T] {
 	})
 }
 
-// Skip the first values of the IEnumerable[T] that satisfy a predicate function
+// Skip the first values of the Enumerable[T] that satisfy a predicate function
 // Evaluates lazily, call apply to evaluate
 func (e enumerable[T]) SkipWhile(f func(T) bool) Enumerable[T] {
 	return e.lazy(func(e Enumerable[T]) Enumerable[T] {
@@ -162,7 +162,7 @@ func (e enumerable[T]) SkipWhile(f func(T) bool) Enumerable[T] {
 	})
 }
 
-// Contains returns true if the IEnumerable[T] contains the value
+// Contains returns true if the Enumerable[T] contains the value
 func (e enumerable[T]) Contains(value T) bool {
 	for _, v := range e.Apply().getValues() {
 		if v == value {
@@ -172,7 +172,7 @@ func (e enumerable[T]) Contains(value T) bool {
 	return false
 }
 
-// Any returns true if the IEnumerable[T] contains a value that satisfies the predicate
+// Any returns true if the Enumerable[T] contains a value that satisfies the predicate
 func (e enumerable[T]) Any(f func(T) bool) bool {
 	for _, v := range e.Apply().getValues() {
 		if f(v) {
@@ -182,7 +182,7 @@ func (e enumerable[T]) Any(f func(T) bool) bool {
 	return false
 }
 
-// All returns true if all values in the IEnumerable[T] satisfy the predicate
+// All returns true if all values in the Enumerable[T] satisfy the predicate
 func (e enumerable[T]) All(f func(T) bool) bool {
 	result := true
 	for _, v := range e.Apply().getValues() {
@@ -193,7 +193,7 @@ func (e enumerable[T]) All(f func(T) bool) bool {
 	return result
 }
 
-// Reduce the IEnumerable[T] to a single value
+// Reduce the Enumerable[T] to a single value
 func (e enumerable[T]) Reduce(f func(T, T) T) T {
 	e = e.Apply().(enumerable[T])
 	result := e.values[0]
@@ -203,14 +203,14 @@ func (e enumerable[T]) Reduce(f func(T, T) T) T {
 	return result
 }
 
-// Iterate over the IEnumerable[T], calling the function for each value
+// Iterate over the Enumerable[T], calling the function for each value
 func (e enumerable[T]) ForEach(f func(T)) {
 	for _, v := range e.Apply().getValues() {
 		f(v)
 	}
 }
 
-// Map a function over the IEnumerable[T] but return a new IEnumerable of a different type
+// Map a function over the Enumerable[T] but return a new IEnumerable of a different type
 func Transform[T comparable, U comparable](e Enumerable[T], f func(T) U) Enumerable[U] {
 	// TODO: Lazy evaluation broken here, would need some way to convert the stack to the new type
 	values := e.Apply().getValues()
@@ -221,7 +221,7 @@ func Transform[T comparable, U comparable](e Enumerable[T], f func(T) U) Enumera
 	return New(newValues)
 }
 
-// Apply all the functions from the stack to the IEnumerable[T]
+// Apply all the functions from the stack to the Enumerable[T]
 func (e enumerable[T]) Apply() Enumerable[T] {
 	for _, f := range e.stack {
 		// recreate the enumerable without the stack
