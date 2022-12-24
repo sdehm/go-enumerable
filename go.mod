@@ -1,3 +1,3 @@
 module github.com/sdehm/go-enumerable
 
-go 1.19
+go 1.20

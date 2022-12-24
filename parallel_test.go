@@ -29,12 +29,12 @@ func TestMapParallel(t *testing.T) {
 	}).Apply()
 	expected := New([]int{2, 4, 6})
 
-	if len(result.values) != 3 {
-		t.Errorf("Expected 3 values, got %d", len(result.values))
+	if len(result.getValues()) != 3 {
+		t.Errorf("Expected 3 values, got %d", len(result.getValues()))
 	}
-	for i, v := range result.values {
-		if v != expected.values[i] {
-			t.Errorf("Expected %d, got %d", expected.values[i], v)
+	for i, v := range result.getValues() {
+		if v != expected.getValues()[i] {
+			t.Errorf("Expected %d, got %d", expected.getValues()[i], v)
 		}
 	}
 }
@@ -50,12 +50,12 @@ func TestTransformParallel(t *testing.T) {
 	}).Apply()
 	expected := New([]string{"1", "2", "3"})
 
-	if len(result.values) != 3 {
-		t.Errorf("Expected 3 values, got %d", len(result.values))
+	if len(result.getValues()) != 3 {
+		t.Errorf("Expected 3 values, got %d", len(result.getValues()))
 	}
-	for i, v := range result.values {
-		if v != expected.values[i] {
-			t.Errorf("Expected %s, got %s", expected.values[i], v)
+	for i, v := range result.getValues() {
+		if v != expected.getValues()[i] {
+			t.Errorf("Expected %s, got %s", expected.getValues()[i], v)
 		}
 	}
 }

@@ -10,12 +10,12 @@ func TestAppend(t *testing.T) {
 	result := e.Append(4).Apply()
 	expected := New([]int{1, 2, 3, 4})
 
-	if len(result.values) != 4 {
-		t.Errorf("Expected 4 values, got %d", len(result.values))
+	if len(result.getValues()) != 4 {
+		t.Errorf("Expected 4 values, got %d", len(result.getValues()))
 	}
-	for i, v := range result.values {
-		if v != expected.values[i] {
-			t.Errorf("Expected %d, got %d", expected.values[i], v)
+	for i, v := range result.getValues() {
+		if v != expected.getValues()[i] {
+			t.Errorf("Expected %d, got %d", expected.getValues()[i], v)
 		}
 	}
 }
@@ -25,12 +25,12 @@ func TestMapInt(t *testing.T) {
 	result := e.Map(func(i int) int { return i * 2 }).Apply()
 	expected := New([]int{2, 4, 6})
 
-	if len(result.values) != 3 {
-		t.Errorf("Expected 3 values, got %d", len(result.values))
+	if len(result.getValues()) != 3 {
+		t.Errorf("Expected 3 values, got %d", len(result.getValues()))
 	}
-	for i, v := range result.values {
-		if v != expected.values[i] {
-			t.Errorf("Expected %d, got %d", expected.values[i], v)
+	for i, v := range result.getValues() {
+		if v != expected.getValues()[i] {
+			t.Errorf("Expected %d, got %d", expected.getValues()[i], v)
 		}
 	}
 }
@@ -40,12 +40,12 @@ func TestMapString(t *testing.T) {
 	result := e.Map(func(s string) string { return s + s }).Apply()
 	expected := New([]string{"aa", "bb", "cc"})
 
-	if len(result.values) != 3 {
-		t.Errorf("Expected 3 values, got %d", len(result.values))
+	if len(result.getValues()) != 3 {
+		t.Errorf("Expected 3 values, got %d", len(result.getValues()))
 	}
-	for i, v := range result.values {
-		if v != expected.values[i] {
-			t.Errorf("Expected %s, got %s", expected.values[i], v)
+	for i, v := range result.getValues() {
+		if v != expected.getValues()[i] {
+			t.Errorf("Expected %s, got %s", expected.getValues()[i], v)
 		}
 	}
 }
@@ -86,12 +86,12 @@ func TestTransform(t *testing.T) {
 	result := Transform(e, func(i int) string { return strconv.Itoa(i) })
 	expected := New([]string{"1", "2", "3"})
 
-	if len(result.values) != 3 {
-		t.Errorf("Expected 3 values, got %d", len(result.values))
+	if len(result.getValues()) != 3 {
+		t.Errorf("Expected 3 values, got %d", len(result.getValues()))
 	}
-	for i, v := range result.values {
-		if v != expected.values[i] {
-			t.Errorf("Expected %s, got %s", expected.values[i], v)
+	for i, v := range result.getValues() {
+		if v != expected.getValues()[i] {
+			t.Errorf("Expected %s, got %s", expected.getValues()[i], v)
 		}
 	}
 }
@@ -101,12 +101,12 @@ func TestReverse(t *testing.T) {
 	result := e.Reverse().Apply()
 	expected := New([]int{3, 2, 1})
 
-	if len(result.values) != 3 {
-		t.Errorf("Expected 3 values, got %d", len(result.values))
+	if len(result.getValues()) != 3 {
+		t.Errorf("Expected 3 values, got %d", len(result.getValues()))
 	}
-	for i, v := range result.values {
-		if v != expected.values[i] {
-			t.Errorf("Expected %d, got %d", expected.values[i], v)
+	for i, v := range result.getValues() {
+		if v != expected.getValues()[i] {
+			t.Errorf("Expected %d, got %d", expected.getValues()[i], v)
 		}
 	}
 }
@@ -116,12 +116,12 @@ func TestFilter(t *testing.T) {
 	result := e.Filter(func(i int) bool { return i > 1 }).Apply()
 	expected := New([]int{2, 3})
 
-	if len(result.values) != 2 {
-		t.Errorf("Expected 2 values, got %d", len(result.values))
+	if len(result.getValues()) != 2 {
+		t.Errorf("Expected 2 values, got %d", len(result.getValues()))
 	}
-	for i, v := range result.values {
-		if v != expected.values[i] {
-			t.Errorf("Expected %d, got %d", expected.values[i], v)
+	for i, v := range result.getValues() {
+		if v != expected.getValues()[i] {
+			t.Errorf("Expected %d, got %d", expected.getValues()[i], v)
 		}
 	}
 }
@@ -146,12 +146,12 @@ func TestMapThenFilter(t *testing.T) {
 	result := e.Map(func(i int) int { return i * 2 }).Filter(func(i int) bool { return i > 2 }).Apply()
 	expected := New([]int{4, 6})
 
-	if len(result.values) != 2 {
-		t.Errorf("Expected 2 values, got %d", len(result.values))
+	if len(result.getValues()) != 2 {
+		t.Errorf("Expected 2 values, got %d", len(result.getValues()))
 	}
-	for i, v := range result.values {
-		if v != expected.values[i] {
-			t.Errorf("Expected %d, got %d", expected.values[i], v)
+	for i, v := range result.getValues() {
+		if v != expected.getValues()[i] {
+			t.Errorf("Expected %d, got %d", expected.getValues()[i], v)
 		}
 	}
 }
@@ -161,12 +161,12 @@ func TestFilterThenMap(t *testing.T) {
 	result := e.Filter(func(i int) bool { return i > 1 }).Map(func(i int) int { return i * 2 }).Apply()
 	expected := New([]int{4, 6})
 
-	if len(result.values) != 2 {
-		t.Errorf("Expected 2 values, got %d", len(result.values))
+	if len(result.getValues()) != 2 {
+		t.Errorf("Expected 2 values, got %d", len(result.getValues()))
 	}
-	for i, v := range result.values {
-		if v != expected.values[i] {
-			t.Errorf("Expected %d, got %d", expected.values[i], v)
+	for i, v := range result.getValues() {
+		if v != expected.getValues()[i] {
+			t.Errorf("Expected %d, got %d", expected.getValues()[i], v)
 		}
 	}
 }
@@ -176,12 +176,12 @@ func TestMapThenReverse(t *testing.T) {
 	result := e.Map(func(i int) int { return i * 2 }).Reverse().Apply()
 	expected := New([]int{6, 4, 2})
 
-	if len(result.values) != 3 {
-		t.Errorf("Expected 3 values, got %d", len(result.values))
+	if len(result.getValues()) != 3 {
+		t.Errorf("Expected 3 values, got %d", len(result.getValues()))
 	}
-	for i, v := range result.values {
-		if v != expected.values[i] {
-			t.Errorf("Expected %d, got %d", expected.values[i], v)
+	for i, v := range result.getValues() {
+		if v != expected.getValues()[i] {
+			t.Errorf("Expected %d, got %d", expected.getValues()[i], v)
 		}
 	}
 }
@@ -191,12 +191,12 @@ func TestReverseThenMap(t *testing.T) {
 	result := e.Reverse().Map(func(i int) int { return i * 2 }).Apply()
 	expected := New([]int{6, 4, 2})
 
-	if len(result.values) != 3 {
-		t.Errorf("Expected 3 values, got %d", len(result.values))
+	if len(result.getValues()) != 3 {
+		t.Errorf("Expected 3 values, got %d", len(result.getValues()))
 	}
-	for i, v := range result.values {
-		if v != expected.values[i] {
-			t.Errorf("Expected %d, got %d", expected.values[i], v)
+	for i, v := range result.getValues() {
+		if v != expected.getValues()[i] {
+			t.Errorf("Expected %d, got %d", expected.getValues()[i], v)
 		}
 	}
 }
@@ -271,12 +271,12 @@ func TestFilterThenTransform(t *testing.T) {
 	result := Transform(e.Filter(func(i int) bool { return i > 1 }), func(i int) string { return strconv.Itoa(i) })
 	expected := New([]string{"2", "3"})
 
-	if len(result.values) != 2 {
-		t.Errorf("Expected 2 values, got %d", len(result.values))
+	if len(result.getValues()) != 2 {
+		t.Errorf("Expected 2 values, got %d", len(result.getValues()))
 	}
-	for i, v := range result.values {
-		if v != expected.values[i] {
-			t.Errorf("Expected %s, got %s", expected.values[i], v)
+	for i, v := range result.getValues() {
+		if v != expected.getValues()[i] {
+			t.Errorf("Expected %s, got %s", expected.getValues()[i], v)
 		}
 	}
 }
@@ -297,12 +297,12 @@ func TestTake(t *testing.T) {
 	result := e.Take(2).Apply()
 	expected := New([]int{1, 2})
 
-	if len(result.values) != 2 {
-		t.Errorf("Expected 2 values, got %d", len(result.values))
+	if len(result.getValues()) != 2 {
+		t.Errorf("Expected 2 values, got %d", len(result.getValues()))
 	}
-	for i, v := range result.values {
-		if v != expected.values[i] {
-			t.Errorf("Expected %d, got %d", expected.values[i], v)
+	for i, v := range result.getValues() {
+		if v != expected.getValues()[i] {
+			t.Errorf("Expected %d, got %d", expected.getValues()[i], v)
 		}
 	}
 }
@@ -312,12 +312,12 @@ func TestTakeOverflow(t *testing.T) {
 	result := e.Take(5).Apply()
 	expected := New([]int{1, 2, 3})
 
-	if len(result.values) != 3 {
-		t.Errorf("Expected 3 values, got %d", len(result.values))
+	if len(result.getValues()) != 3 {
+		t.Errorf("Expected 3 values, got %d", len(result.getValues()))
 	}
-	for i, v := range result.values {
-		if v != expected.values[i] {
-			t.Errorf("Expected %d, got %d", expected.values[i], v)
+	for i, v := range result.getValues() {
+		if v != expected.getValues()[i] {
+			t.Errorf("Expected %d, got %d", expected.getValues()[i], v)
 		}
 	}
 }
@@ -327,12 +327,12 @@ func TestTakeNegative(t *testing.T) {
 	result := e.Take(-2).Apply()
 	expected := New([]int{2, 3})
 
-	if len(result.values) != 2 {
-		t.Errorf("Expected 0 values, got %d", len(result.values))
+	if len(result.getValues()) != 2 {
+		t.Errorf("Expected 0 values, got %d", len(result.getValues()))
 	}
-	for i, v := range result.values {
-		if v != expected.values[i] {
-			t.Errorf("Expected %d, got %d", expected.values[i], v)
+	for i, v := range result.getValues() {
+		if v != expected.getValues()[i] {
+			t.Errorf("Expected %d, got %d", expected.getValues()[i], v)
 		}
 	}
 }
@@ -342,12 +342,12 @@ func TestSkip(t *testing.T) {
 	result := e.Skip(2).Apply()
 	expected := New([]int{3})
 
-	if len(result.values) != 1 {
-		t.Errorf("Expected 1 values, got %d", len(result.values))
+	if len(result.getValues()) != 1 {
+		t.Errorf("Expected 1 values, got %d", len(result.getValues()))
 	}
-	for i, v := range result.values {
-		if v != expected.values[i] {
-			t.Errorf("Expected %d, got %d", expected.values[i], v)
+	for i, v := range result.getValues() {
+		if v != expected.getValues()[i] {
+			t.Errorf("Expected %d, got %d", expected.getValues()[i], v)
 		}
 	}
 }
@@ -357,12 +357,12 @@ func TestSkipOverflow(t *testing.T) {
 	result := e.Skip(5).Apply()
 	expected := New([]int{})
 
-	if len(result.values) != 0 {
-		t.Errorf("Expected 0 values, got %d", len(result.values))
+	if len(result.getValues()) != 0 {
+		t.Errorf("Expected 0 values, got %d", len(result.getValues()))
 	}
-	for i, v := range result.values {
-		if v != expected.values[i] {
-			t.Errorf("Expected %d, got %d", expected.values[i], v)
+	for i, v := range result.getValues() {
+		if v != expected.getValues()[i] {
+			t.Errorf("Expected %d, got %d", expected.getValues()[i], v)
 		}
 	}
 }
@@ -372,12 +372,12 @@ func TestSkipNegative(t *testing.T) {
 	result := e.Skip(-2).Apply()
 	expected := New([]int{1})
 
-	if len(result.values) != 1 {
-		t.Errorf("Expected 1 values, got %d", len(result.values))
+	if len(result.getValues()) != 1 {
+		t.Errorf("Expected 1 values, got %d", len(result.getValues()))
 	}
-	for i, v := range result.values {
-		if v != expected.values[i] {
-			t.Errorf("Expected %d, got %d", expected.values[i], v)
+	for i, v := range result.getValues() {
+		if v != expected.getValues()[i] {
+			t.Errorf("Expected %d, got %d", expected.getValues()[i], v)
 		}
 	}
 }
@@ -387,12 +387,12 @@ func TestTakeWhile(t *testing.T) {
 	result := e.TakeWhile(func(i int) bool { return i < 3 }).Apply()
 	expected := New([]int{1, 2})
 
-	if len(result.values) != 2 {
-		t.Errorf("Expected 2 values, got %d", len(result.values))
+	if len(result.getValues()) != 2 {
+		t.Errorf("Expected 2 values, got %d", len(result.getValues()))
 	}
-	for i, v := range result.values {
-		if v != expected.values[i] {
-			t.Errorf("Expected %d, got %d", expected.values[i], v)
+	for i, v := range result.getValues() {
+		if v != expected.getValues()[i] {
+			t.Errorf("Expected %d, got %d", expected.getValues()[i], v)
 		}
 	}
 }
@@ -402,12 +402,12 @@ func TestTakeWhileFalse(t *testing.T) {
 	result := e.TakeWhile(func(i int) bool { return i < 0 }).Apply()
 	expected := New([]int{})
 
-	if len(result.values) != 0 {
-		t.Errorf("Expected 0 values, got %d", len(result.values))
+	if len(result.getValues()) != 0 {
+		t.Errorf("Expected 0 values, got %d", len(result.getValues()))
 	}
-	for i, v := range result.values {
-		if v != expected.values[i] {
-			t.Errorf("Expected %d, got %d", expected.values[i], v)
+	for i, v := range result.getValues() {
+		if v != expected.getValues()[i] {
+			t.Errorf("Expected %d, got %d", expected.getValues()[i], v)
 		}
 	}
 }
@@ -417,12 +417,12 @@ func TestSkipWhile(t *testing.T) {
 	result := e.SkipWhile(func(i int) bool { return i < 3 }).Apply()
 	expected := New([]int{3})
 
-	if len(result.values) != 1 {
-		t.Errorf("Expected 1 values, got %d", len(result.values))
+	if len(result.getValues()) != 1 {
+		t.Errorf("Expected 1 values, got %d", len(result.getValues()))
 	}
-	for i, v := range result.values {
-		if v != expected.values[i] {
-			t.Errorf("Expected %d, got %d", expected.values[i], v)
+	for i, v := range result.getValues() {
+		if v != expected.getValues()[i] {
+			t.Errorf("Expected %d, got %d", expected.getValues()[i], v)
 		}
 	}
 }
@@ -432,12 +432,31 @@ func TestSkipWhileFalse(t *testing.T) {
 	result := e.SkipWhile(func(i int) bool { return i < 0 }).Apply()
 	expected := New([]int{1, 2, 3})
 
-	if len(result.values) != 3 {
-		t.Errorf("Expected 3 values, got %d", len(result.values))
+	if len(result.getValues()) != 3 {
+		t.Errorf("Expected 3 values, got %d", len(result.getValues()))
 	}
-	for i, v := range result.values {
-		if v != expected.values[i] {
-			t.Errorf("Expected %d, got %d", expected.values[i], v)
+	for i, v := range result.getValues() {
+		if v != expected.getValues()[i] {
+			t.Errorf("Expected %d, got %d", expected.getValues()[i], v)
+		}
+	}
+}
+
+func TestNestedAppend(t *testing.T) {
+	e1 := New([]int{1, 2, 3})
+	e2 := New([]int{4, 5, 6})
+	e3 := New([]int{7, 8, 9})
+	e := New([]Enumerable[int]{e1, e2})
+	result := e.Append(e3).Apply()
+	expected := New([]Enumerable[int]{e1, e2, e3})
+	if len(result.getValues()) != 3 {
+		t.Errorf("Expected 3 values, got %d", len(result.getValues()))
+	}
+	for i, v := range result.getValues() {
+		for j, w := range v.getValues() {
+			if w != expected.getValues()[i].getValues()[j] {
+				t.Errorf("Expected %d, got %d", expected.getValues()[i].getValues()[j], w)
+			}
 		}
 	}
 }
